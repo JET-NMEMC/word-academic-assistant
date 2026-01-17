@@ -20,8 +20,7 @@ Office.onReady((info) => {
 
     // 绑定输入框和文本域事件，实时更新按钮状态
     document.getElementById("doubao-api-key").oninput = updateButtonStates;
-    document.getElementById("endpoint-polish").oninput = updateButtonStates;
-    document.getElementById("endpoint-translate").oninput = updateButtonStates;
+    if (document.getElementById("endpoint-id")) document.getElementById("endpoint-id").oninput = updateButtonStates;
     document.getElementById("result-polish").oninput = updateButtonStates;
 
     // 初始状态检查
@@ -142,61 +141,71 @@ async function writeTextToDocument(text, mode) {
 }
 
 /**
- * 通用豆包 Ark API 调用 (v3/responses)
+ * 通用豆包 Ark API 调用 (兼容 chat/completions 和 responses)
  * @param {string} apiKey API Key
  * @param {string} endpointId 模型 Endpoint ID
  * @param {string} text 替换模板后的完整提示词文本
  */
 async function callArkAPI(apiKey, endpointId, text) {
-  const url = "https://ark.cn-beijing.volces.com/api/v3/responses";
-  const requestData = {
+  // 1. 首先尝试最通用的 chat/completions 接口
+  const chatUrl = "https://ark.cn-beijing.volces.com/api/v3/chat/completions";
+  const chatData = {
     model: endpointId,
-    input: [
-      {
-        role: "user",
-        content: [
-          {
-            type: "input_text",
-            text: text
-          }
-        ]
-      }
-    ]
+    messages: [
+      { role: "system", content: "你是一个专业的学术写作助手。" },
+      { role: "user", content: text }
+    ],
+    temperature: 0.2
   };
 
   try {
-    const response = await fetch(url, {
+    const response = await fetch(chatUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${apiKey}`
       },
-      body: JSON.stringify(requestData)
+      body: JSON.stringify(chatData)
     });
 
-    if (!response.ok) {
-      if (response.status === 401) return "API Key 错误";
-      if (response.status === 404) return "模型 Endpoint 未找到";
-      return `请求失败：${response.status}`;
+    if (response.ok) {
+      const result = await response.json();
+      return result?.choices?.[0]?.message?.content || "结果为空";
     }
 
-    const result = await response.json();
-    // v3/responses 返回结构解析：choices[0].message.content
-    const content = result?.choices?.[0]?.message?.content;
+    // 如果 chat/completions 报错 (比如 404 或 400)，尝试 responses 接口 (针对种子模型)
+    console.log("chat/completions failed, trying responses...", response.status);
     
-    // 兼容数组形式的 content (多模态结构)
-    if (Array.isArray(content)) {
-      const firstText = content.find(c => c.text)?.text || content[0]?.text || "";
-      if (firstText) return firstText;
-    } 
-    // 兼容纯字符串形式的 content
-    else if (typeof content === "string") {
-      return content;
+    const respUrl = "https://ark.cn-beijing.volces.com/api/v3/responses";
+    const respData = {
+      model: endpointId,
+      input: [{ role: "user", content: [{ type: "input_text", text: text }] }]
+    };
+
+    const respResponse = await fetch(respUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${apiKey}`
+      },
+      body: JSON.stringify(respData)
+    });
+
+    if (respResponse.ok) {
+      const result = await respResponse.json();
+      const content = result?.choices?.[0]?.message?.content;
+      if (Array.isArray(content)) {
+        return content.find(c => c.text)?.text || content[0]?.text || "结果为空";
+      }
+      return typeof content === "string" ? content : "结果格式异常";
     }
 
-    return "接口返回格式异常";
+    // 都失败了
+    if (respResponse.status === 401) return "API Key 错误";
+    if (respResponse.status === 404) return "模型 Endpoint ID 错误或不支持该接口";
+    return `接口调用失败 (Error ${respResponse.status})`;
   } catch (error) {
-    return "调用异常：" + error.message;
+    return "网络调用异常：" + error.message;
   }
 }
 
