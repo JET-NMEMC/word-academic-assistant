@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0" xmlns:ov="http://schemas.microsoft.com/office/taskpaneappversionoverrides" xsi:type="TaskPaneApp">
-  <Id>d2f3e4a5-b6c7-4d8e-9f0a-1b2c3d4e5f6a</Id>
-  <Version>1.0.0.3</Version>
+  <Id>7d4a5b6c-8e9f-0a1b-2c3d-4e5f6a7b8c9d</Id>
+  <Version>1.0.0.4</Version>
   <ProviderName>JET-NMEMC</ProviderName>
   <DefaultLocale>zh-CN</DefaultLocale>
   <DisplayName DefaultValue="学术写作助手" />
@@ -17,6 +17,11 @@
   <Hosts>
     <Host Name="Document" />
   </Hosts>
+  <Requirements>
+    <Sets DefaultMinVersion="1.1">
+      <Set Name="WordApi" />
+    </Sets>
+  </Requirements>
   <DefaultSettings>
     <SourceLocation DefaultValue="https://jet-nmemc.github.io/word-academic-assistant/index.html" />
   </DefaultSettings>
