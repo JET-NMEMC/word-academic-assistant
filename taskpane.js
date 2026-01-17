@@ -142,57 +142,27 @@ async function writeTextToDocument(text, mode) {
 }
 
 /**
- * 调用豆包 AI 接口
+ * 通用豆包 Ark API 调用 (v3/responses)
+ * @param {string} apiKey API Key
+ * @param {string} endpointId 模型 Endpoint ID
+ * @param {string} text 替换模板后的完整提示词文本
  */
-async function callDoubaoAPI(apiKey, endpointId, prompt) {
-  const doubaoApiUrl = "https://ark.cn-beijing.volces.com/api/v3/chat/completions"; 
+async function callArkAPI(apiKey, endpointId, text) {
+  const url = "https://ark.cn-beijing.volces.com/api/v3/responses";
   const requestData = {
     model: endpointId,
-    messages: [
-      { role: "system", content: "你是一个专业的学术写作助手，精通汉语润色和学术汉译英。" },
-      { role: "user", content: prompt }
-    ],
-    temperature: 0.2,
-    max_tokens: 2048
+    input: [
+      {
+        role: "user",
+        content: [
+          {
+            type: "input_text",
+            text: text
+          }
+        ]
+      }
+    ]
   };
-
-  try {
-    const response = await fetch(doubaoApiUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${apiKey}`
-      },
-      body: JSON.stringify(requestData)
-    });
-
-    if (!response.ok) {
-      if (response.status === 401) return "API Key 错误，请核对后重新输入";
-      if (response.status === 404) return "模型 Endpoint 未找到，请检查配置";
-      const errorDetail = await response.text();
-      return `API 请求失败：${response.status}`;
-    }
-
-    const result = await response.json();
-    if (!result || !result.choices || !result.choices[0] || !result.choices[0].message) {
-      return "AI 返回结果格式错误，请重试";
-    }
-    return result.choices[0].message.content || "AI 返回结果为空";
-  } catch (error) {
-    if (error.name === "TypeError" || error.message.includes("fetch")) {
-      return "网络异常，请检查网络连接";
-    }
-    return "AI 调用失败：" + error.message;
-  }
-}
-
-/**
- * 专门针对种子翻译模型的 API 调用 (v3/responses)
- */
-async function callTranslationAPI(apiKey, endpointId, text) {
-  const url = "https://ark.cn-beijing.volces.com/api/v3/responses";
-  const items = [{ type: "input_text", text }];
-  const requestData = { model: endpointId, input: [{ role: "user", content: items }] };
 
   try {
     const response = await fetch(url, {
@@ -206,28 +176,27 @@ async function callTranslationAPI(apiKey, endpointId, text) {
 
     if (!response.ok) {
       if (response.status === 401) return "API Key 错误";
-      if (response.status === 404) return "翻译接入点未找到";
-      return `翻译请求失败：${response.status}`;
+      if (response.status === 404) return "模型 Endpoint 未找到";
+      return `请求失败：${response.status}`;
     }
 
     const result = await response.json();
-    // v3/responses 返回结构解析
+    // v3/responses 返回结构解析：choices[0].message.content
     const content = result?.choices?.[0]?.message?.content;
+    
+    // 兼容数组形式的 content (多模态结构)
     if (Array.isArray(content)) {
       const firstText = content.find(c => c.text)?.text || content[0]?.text || "";
       if (firstText) return firstText;
-    } else if (typeof content === "string") {
+    } 
+    // 兼容纯字符串形式的 content
+    else if (typeof content === "string") {
       return content;
     }
 
-    // 兜底：尝试使用 chat/completions 做翻译
-    const fallbackPrompt = `请将以下汉语文本翻译为学术英文：\n\n${text}`;
-    const fallback = await callDoubaoAPI(apiKey, endpointId, fallbackPrompt);
-    if (fallback && typeof fallback === "string") return fallback;
-
-    return "翻译失败：接口返回格式异常";
+    return "接口返回格式异常";
   } catch (error) {
-    return "翻译异常：" + error.message;
+    return "调用异常：" + error.message;
   }
 }
 
@@ -238,50 +207,23 @@ async function executePolish() {
   const apiKey = document.getElementById("doubao-api-key").value.trim();
   const endpointId = (document.getElementById("endpoint-id")?.value || "").trim();
   const selectedText = await getSelectedText();
+  const polishTemplate = document.getElementById("prompt-polish-template").value;
   
   if (!selectedText) {
-    showStatus("polish", "未选中任何文本，无法执行", "error");
+    showStatus("polish", "未选中任何文本", "error");
     return;
   }
 
-  const tplPolish = (document.getElementById("prompt-polish-template")?.value || defaultPolishTemplate);
-  const prompt = tplPolish.replace("{text}", selectedText);
-  showStatus("polish", "AI 处理中...", "success");
+  const prompt = polishTemplate.replace("{text}", selectedText);
+  showStatus("polish", "正在润色...", "success");
 
-  const url = "https://ark.cn-beijing.volces.com/api/v3/responses";
-  const requestData = { model: endpointId, input: [{ role: "user", content: [{ type: "input_text", text: prompt }] }] };
-  let aiResult = "";
-  try {
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${apiKey}`
-      },
-      body: JSON.stringify(requestData)
-    });
-    if (!response.ok) {
-      aiResult = `请求失败：${response.status}`;
-    } else {
-      const result = await response.json();
-      const content = result?.choices?.[0]?.message?.content;
-      if (Array.isArray(content)) {
-        aiResult = content.find(c => c.text)?.text || content[0]?.text || "结果为空";
-      } else if (typeof content === "string") {
-        aiResult = content;
-      } else {
-        aiResult = "结果格式异常";
-      }
-    }
-  } catch (e) {
-    aiResult = "网络异常或接口错误";
-  }
+  const aiResult = await callArkAPI(apiKey, endpointId, prompt);
   
   if (aiResult.includes("失败") || aiResult.includes("异常") || aiResult.includes("错误") || aiResult.includes("无效")) {
     showStatus("polish", aiResult, "error");
   } else {
     document.getElementById("result-polish").value = aiResult;
-    showStatus("polish", "处理完成（可编辑后点击采纳）", "success");
+    showStatus("polish", "润色完成", "success");
     updateButtonStates();
   }
 }
@@ -293,23 +235,23 @@ async function executeTranslate() {
   const apiKey = document.getElementById("doubao-api-key").value.trim();
   const endpointId = (document.getElementById("endpoint-id")?.value || "").trim();
   const polishText = document.getElementById("result-polish").value.trim();
+  const translateTemplate = document.getElementById("prompt-translate-template").value;
   
   if (!polishText) {
-    showStatus("translate", "请先执行并生成润色结果", "error");
+    showStatus("translate", "润色结果为空", "error");
     return;
   }
 
-  const tplTranslate = (document.getElementById("prompt-translate-template")?.value || defaultTranslateTemplate);
-  const prompt = tplTranslate.replace("{text}", polishText);
-  showStatus("translate", "AI 翻译中...", "success");
+  const prompt = translateTemplate.replace("{text}", polishText);
+  showStatus("translate", "正在翻译...", "success");
 
-  const aiResult = await callTranslationAPI(apiKey, endpointId, prompt);
+  const aiResult = await callArkAPI(apiKey, endpointId, prompt);
   
   if (aiResult.includes("失败") || aiResult.includes("异常") || aiResult.includes("错误") || aiResult.includes("无效")) {
     showStatus("translate", aiResult, "error");
   } else {
     document.getElementById("result-translate").value = aiResult;
-    showStatus("translate", "翻译完成（可编辑后点击采纳）", "success");
+    showStatus("translate", "翻译完成", "success");
     updateButtonStates();
   }
 }
