@@ -158,10 +158,10 @@ async function callArkAPI(apiKey, endpointId, text) {
     const body = {
       model: endpointId,
       messages: [
-        { role: "system", content: "你是一个专业的学术写作助手。" },
+        // { role: "system", content: "你是一个专业的学术写作助手。" },
         { role: "user", content: text }
       ],
-      temperature: 0.2
+      temperature: 0.6
     };
     
     const start = Date.now();
@@ -185,7 +185,8 @@ async function callArkAPI(apiKey, endpointId, text) {
       input: [{ 
         role: "user", 
         content: [{ type: "input_text", text: text }] 
-      }]
+      }],
+      reasoning: {effort: "minimal"}
     };
 
     const start = Date.now();
