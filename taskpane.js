@@ -146,66 +146,94 @@ async function writeTextToDocument(text, mode) {
  * @param {string} endpointId 模型 Endpoint ID
  * @param {string} text 替换模板后的完整提示词文本
  */
+/**
+ * 通用豆包 Ark API 调用 (智能自动切换 chat/completions 和 responses)
+ * @param {string} apiKey API Key
+ * @param {string} endpointId 模型 Endpoint ID
+ * @param {string} text 替换模板后的完整提示词文本
+ */
 async function callArkAPI(apiKey, endpointId, text) {
-  // 1. 首先尝试最通用的 chat/completions 接口
-  const chatUrl = "https://ark.cn-beijing.volces.com/api/v3/chat/completions";
-  const chatData = {
-    model: endpointId,
-    messages: [
-      { role: "system", content: "你是一个专业的学术写作助手。" },
-      { role: "user", content: text }
-    ],
-    temperature: 0.2
+  const headers = {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${apiKey}`
   };
 
-  try {
-    const response = await fetch(chatUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${apiKey}`
-      },
-      body: JSON.stringify(chatData)
-    });
-
-    if (response.ok) {
-      const result = await response.json();
-      return result?.choices?.[0]?.message?.content || "结果为空";
+  // 定义两种请求方式
+  const doChat = async () => {
+    const url = "https://ark.cn-beijing.volces.com/api/v3/chat/completions";
+    const body = {
+      model: endpointId,
+      messages: [
+        { role: "system", content: "你是一个专业的学术写作助手。" },
+        { role: "user", content: text }
+      ],
+      temperature: 0.2
+    };
+    const start = Date.now();
+    try {
+      const res = await fetch(url, { method: "POST", headers, body: JSON.stringify(body) });
+      console.log(`[ArkAPI] Chat API cost: ${Date.now() - start}ms, status: ${res.status}`);
+      if (!res.ok) throw new Error(res.status);
+      const data = await res.json();
+      return data?.choices?.[0]?.message?.content || "结果为空";
+    } catch (e) {
+      throw e;
     }
+  };
 
-    // 如果 chat/completions 报错 (比如 404 或 400)，尝试 responses 接口 (针对种子模型)
-    console.log("chat/completions failed, trying responses...", response.status);
-    
-    const respUrl = "https://ark.cn-beijing.volces.com/api/v3/responses";
-    const respData = {
+  const doResponses = async () => {
+    const url = "https://ark.cn-beijing.volces.com/api/v3/responses";
+    const body = {
       model: endpointId,
       input: [{ role: "user", content: [{ type: "input_text", text: text }] }]
     };
-
-    const respResponse = await fetch(respUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${apiKey}`
-      },
-      body: JSON.stringify(respData)
-    });
-
-    if (respResponse.ok) {
-      const result = await respResponse.json();
-      const content = result?.choices?.[0]?.message?.content;
+    const start = Date.now();
+    try {
+      const res = await fetch(url, { method: "POST", headers, body: JSON.stringify(body) });
+      console.log(`[ArkAPI] Responses API cost: ${Date.now() - start}ms, status: ${res.status}`);
+      if (!res.ok) throw new Error(res.status);
+      const data = await res.json();
+      const content = data?.choices?.[0]?.message?.content;
       if (Array.isArray(content)) {
         return content.find(c => c.text)?.text || content[0]?.text || "结果为空";
       }
       return typeof content === "string" ? content : "结果格式异常";
+    } catch (e) {
+      throw e;
     }
+  };
 
-    // 都失败了
-    if (respResponse.status === 401) return "API Key 错误";
-    if (respResponse.status === 404) return "模型 Endpoint ID 错误或不支持该接口";
-    return `接口调用失败 (Error ${respResponse.status})`;
-  } catch (error) {
-    return "网络调用异常：" + error.message;
+  // 读取上次成功的 API 类型，默认 chat
+  let preferredType = localStorage.getItem("preferred-api-type") || "chat";
+  console.log(`[ArkAPI] Preferred type: ${preferredType}`);
+
+  // 执行逻辑：优先尝试 preferredType，失败则尝试另一种
+  try {
+    if (preferredType === "chat") {
+      try {
+        return await doChat();
+      } catch (err) {
+        console.warn("Chat API failed, trying Responses...", err);
+        const result = await doResponses();
+        localStorage.setItem("preferred-api-type", "responses"); // 记住这次成功的
+        return result;
+      }
+    } else {
+      try {
+        return await doResponses();
+      } catch (err) {
+        console.warn("Responses API failed, trying Chat...", err);
+        const result = await doChat();
+        localStorage.setItem("preferred-api-type", "chat"); // 记住这次成功的
+        return result;
+      }
+    }
+  } catch (finalError) {
+    // 两次都失败
+    const errMsg = finalError.message || "";
+    if (errMsg.includes("401")) return "API Key 错误";
+    if (errMsg.includes("404")) return "模型 Endpoint ID 错误或不支持该接口";
+    return `接口调用失败 (${errMsg})`;
   }
 }
 
