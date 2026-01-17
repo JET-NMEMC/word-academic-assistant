@@ -71,10 +71,19 @@ function showConfigStatus(message, category) {
  * 更新按钮的启用/禁用状态
  */
 async function updateButtonStates() {
-  const apiKey = document.getElementById("doubao-api-key").value.trim();
-  const endpointPolish = document.getElementById("endpoint-polish").value.trim();
-  const endpointTranslate = document.getElementById("endpoint-translate").value.trim();
-  const polishResult = document.getElementById("result-polish").value.trim();
+  const elApiKey = document.getElementById("doubao-api-key");
+  const elEndpointPolish = document.getElementById("endpoint-polish");
+  const elEndpointTranslate = document.getElementById("endpoint-translate");
+  const elPolishResult = document.getElementById("result-polish");
+  const elTranslateResult = document.getElementById("result-translate");
+
+  // 如果元素不存在（比如在错误的页面或 HTML 未更新），直接返回避免崩溃
+  if (!elApiKey || !elEndpointPolish || !elEndpointTranslate || !elPolishResult) return;
+
+  const apiKey = elApiKey.value.trim();
+  const endpointPolish = elEndpointPolish.value.trim();
+  const endpointTranslate = elEndpointTranslate.value.trim();
+  const polishResult = elPolishResult.value.trim();
   
   // 检查是否有选中文本
   let hasSelection = false;
