@@ -31,15 +31,20 @@
       <Host xsi:type="Document">
         <DesktopFormFactor>
           <GetStarted>
-            <Title DefaultValue="开始使用" />
-            <Description DefaultValue="点击按钮打开写作助手。" />
-            <LearnMoreUrl DefaultValue="https://github.com/JET-NMEMC/word-academic-assistant" />
+            <Title resid="GetStarted.Title" />
+            <Description resid="GetStarted.Description" />
+            <LearnMoreUrl resid="GetStarted.LearnMoreUrl" />
           </GetStarted>
           <FunctionFile resid="Commands.Url" />
           <ExtensionPoint xsi:type="PrimaryCommandSurface">
             <OfficeTab id="TabHome">
               <Group id="GroupWritingAssistant">
                 <Label resid="GroupLabel" />
+                <Icon>
+                  <bt:Image size="16" resid="Icon.16x16" />
+                  <bt:Image size="32" resid="Icon.32x32" />
+                  <bt:Image size="80" resid="Icon.80x80" />
+                </Icon>
                 <Control xsi:type="Button" id="TaskpaneButton">
                   <Label resid="TaskpaneButton.Label" />
                   <Supertip>
@@ -71,13 +76,16 @@
       <bt:Urls>
         <bt:Url id="Commands.Url" DefaultValue="https://jet-nmemc.github.io/word-academic-assistant/commands.html" />
         <bt:Url id="Taskpane.Url" DefaultValue="https://jet-nmemc.github.io/word-academic-assistant/index.html" />
+        <bt:Url id="GetStarted.LearnMoreUrl" DefaultValue="https://github.com/JET-NMEMC/word-academic-assistant" />
       </bt:Urls>
       <bt:ShortStrings>
-        <bt:ShortString id="GroupLabel" DefaultValue="学术助手" />
-        <bt:ShortString id="TaskpaneButton.Label" DefaultValue="写作助手" />
+        <bt:String id="GroupLabel" DefaultValue="学术助手" />
+        <bt:String id="TaskpaneButton.Label" DefaultValue="写作助手" />
+        <bt:String id="GetStarted.Title" DefaultValue="开始使用" />
       </bt:ShortStrings>
       <bt:LongStrings>
-        <bt:LongString id="TaskpaneButton.Tooltip" DefaultValue="打开汉语学术写作助手侧边栏" />
+        <bt:String id="TaskpaneButton.Tooltip" DefaultValue="打开汉语学术写作助手侧边栏" />
+        <bt:String id="GetStarted.Description" DefaultValue="点击按钮打开写作助手。" />
       </bt:LongStrings>
     </Resources>
   </VersionOverrides>
