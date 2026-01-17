@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0" xmlns:ov="http://schemas.microsoft.com/office/taskpaneappversionoverrides" xsi:type="TaskPaneApp">
-  <Id>36932587-8052-4743-9528-261555543026</Id>
-  <Version>1.0.0.0</Version>
+  <Id>b4c6e9f2-0a1d-4b8c-9e3f-5d2a7b1c4e6f</Id>
+  <Version>1.0.0.5</Version>
   <ProviderName>JET-NMEMC</ProviderName>
   <DefaultLocale>zh-CN</DefaultLocale>
   <DisplayName DefaultValue="汉语学术写作助手" />
   <Description DefaultValue="为汉语学术作者提供润色和汉译英功能" />
-  <IconUrl DefaultValue="https://jet-nmemc.github.io/word-academic-assistant/assets/icon-32.svg" />
-  <HighResolutionIconUrl DefaultValue="https://jet-nmemc.github.io/word-academic-assistant/assets/icon-64.svg" />
+  <IconUrl DefaultValue="https://res-1.cdn.office.net/files/fabric-cdn-prod_20230815.002/assets/brand-icons/product/png/word_32x1.png" />
+  <HighResolutionIconUrl DefaultValue="https://res-1.cdn.office.net/files/fabric-cdn-prod_20230815.002/assets/brand-icons/product/png/word_64x1.png" />
   <SupportUrl DefaultValue="https://github.com/JET-NMEMC/word-academic-assistant" />
   <AppDomains>
     <AppDomain>https://jet-nmemc.github.io</AppDomain>
@@ -64,9 +64,9 @@
     </Hosts>
     <Resources>
       <bt:Images>
-        <bt:Image id="Icon.16x16" DefaultValue="https://jet-nmemc.github.io/word-academic-assistant/assets/icon-32.svg" />
-        <bt:Image id="Icon.32x32" DefaultValue="https://jet-nmemc.github.io/word-academic-assistant/assets/icon-32.svg" />
-        <bt:Image id="Icon.80x80" DefaultValue="https://jet-nmemc.github.io/word-academic-assistant/assets/icon-80.svg" />
+        <bt:Image id="Icon.16x16" DefaultValue="https://res-1.cdn.office.net/files/fabric-cdn-prod_20230815.002/assets/brand-icons/product/png/word_16x1.png" />
+        <bt:Image id="Icon.32x32" DefaultValue="https://res-1.cdn.office.net/files/fabric-cdn-prod_20230815.002/assets/brand-icons/product/png/word_32x1.png" />
+        <bt:Image id="Icon.80x80" DefaultValue="https://res-1.cdn.office.net/files/fabric-cdn-prod_20230815.002/assets/brand-icons/product/png/word_64x1.png" />
       </bt:Images>
       <bt:Urls>
         <bt:Url id="Commands.Url" DefaultValue="https://jet-nmemc.github.io/word-academic-assistant/commands.html" />
