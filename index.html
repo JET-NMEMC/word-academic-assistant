@@ -15,9 +15,12 @@
             <h2 class="ms-font-xl">火山引擎豆包 API 配置</h2>
             <div class="input-group">
                 <input type="password" id="doubao-api-key" placeholder="请输入火山引擎豆包 API Key" />
-                <input type="text" id="endpoint-polish" placeholder="请输入润色模型 Endpoint ID" />
-                <input type="text" id="endpoint-translate" placeholder="请输入翻译模型 Endpoint ID" />
+                <input type="text" id="endpoint-id" placeholder="请输入模型 Endpoint ID" />
                 <button id="btn-save-config" class="ms-Button ms-Button--primary" style="margin-top: 8px; width: 100%;">保存配置</button>
+            </div>
+            <div class="input-group">
+                <textarea id="prompt-polish-template" placeholder="润色提示词模板" rows="3">请对以下汉语学术文本进行补全和润色，要求术语准确、逻辑清晰、符合学术写作规范，保留原文核心含义：{text}</textarea>
+                <textarea id="prompt-translate-template" placeholder="翻译提示词模板" rows="3">请将以下润色后的汉语学术文本翻译成学术英语，要求语法正确、表达地道、符合英文论文写作规范：{text}</textarea>
             </div>
             <div id="status-config" class="status-hint"></div>
         </section>
