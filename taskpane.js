@@ -141,12 +141,6 @@ async function writeTextToDocument(text, mode) {
 }
 
 /**
- * 通用豆包 Ark API 调用 (兼容 chat/completions 和 responses)
- * @param {string} apiKey API Key
- * @param {string} endpointId 模型 Endpoint ID
- * @param {string} text 替换模板后的完整提示词文本
- */
-/**
  * 通用豆包 Ark API 调用 (智能自动切换 chat/completions 和 responses)
  * @param {string} apiKey API Key
  * @param {string} endpointId 模型 Endpoint ID
@@ -158,7 +152,7 @@ async function callArkAPI(apiKey, endpointId, text) {
     "Authorization": `Bearer ${apiKey}`
   };
 
-  // 定义两种请求方式
+  // 1. 标准 chat/completions 接口 (兼容 OpenAI 格式)
   const doChat = async () => {
     const url = "https://ark.cn-beijing.volces.com/api/v3/chat/completions";
     const body = {
@@ -169,62 +163,74 @@ async function callArkAPI(apiKey, endpointId, text) {
       ],
       temperature: 0.2
     };
+    
     const start = Date.now();
     try {
       const res = await fetch(url, { method: "POST", headers, body: JSON.stringify(body) });
       console.log(`[ArkAPI] Chat API cost: ${Date.now() - start}ms, status: ${res.status}`);
-      if (!res.ok) throw new Error(res.status);
+      if (!res.ok) throw new Error(`Status ${res.status}`);
       const data = await res.json();
       return data?.choices?.[0]?.message?.content || "结果为空";
     } catch (e) {
+      console.warn(`[ArkAPI] Chat API failed: ${e.message}`);
       throw e;
     }
   };
 
+  // 2. 火山引擎特有 responses 接口 (使用 input 和 input_text)
   const doResponses = async () => {
     const url = "https://ark.cn-beijing.volces.com/api/v3/responses";
     const body = {
       model: endpointId,
-      input: [{ role: "user", content: [{ type: "input_text", text: text }] }]
+      input: [{ 
+        role: "user", 
+        content: [{ type: "input_text", text: text }] 
+      }]
     };
+
     const start = Date.now();
     try {
       const res = await fetch(url, { method: "POST", headers, body: JSON.stringify(body) });
       console.log(`[ArkAPI] Responses API cost: ${Date.now() - start}ms, status: ${res.status}`);
-      if (!res.ok) throw new Error(res.status);
+      if (!res.ok) throw new Error(`Status ${res.status}`);
       const data = await res.json();
+      
+      // 解析 responses 接口特有的返回结构
       const content = data?.choices?.[0]?.message?.content;
       if (Array.isArray(content)) {
         return content.find(c => c.text)?.text || content[0]?.text || "结果为空";
       }
       return typeof content === "string" ? content : "结果格式异常";
     } catch (e) {
+      console.warn(`[ArkAPI] Responses API failed: ${e.message}`);
       throw e;
     }
   };
 
-  // 读取上次成功的 API 类型，默认 chat
-  let preferredType = localStorage.getItem("preferred-api-type") || "chat";
-  console.log(`[ArkAPI] Preferred type: ${preferredType}`);
+  // --- 智能调度逻辑 ---
 
-  // 执行逻辑：优先尝试 preferredType，失败则尝试另一种
+  // 读取上次成功的 API 类型，默认优先尝试 chat
+  let preferredType = localStorage.getItem("preferred-api-type") || "chat";
+  
   try {
     if (preferredType === "chat") {
       try {
         return await doChat();
       } catch (err) {
-        console.warn("Chat API failed, trying Responses...", err);
+        // 如果 chat 失败，尝试 responses
+        console.log("Switching to Responses API...");
         const result = await doResponses();
-        localStorage.setItem("preferred-api-type", "responses"); // 记住这次成功的
+        localStorage.setItem("preferred-api-type", "responses"); // 记住这次成功的类型
         return result;
       }
     } else {
       try {
         return await doResponses();
       } catch (err) {
-        console.warn("Responses API failed, trying Chat...", err);
+        // 如果 responses 失败，尝试 chat
+        console.log("Switching to Chat API...");
         const result = await doChat();
-        localStorage.setItem("preferred-api-type", "chat"); // 记住这次成功的
+        localStorage.setItem("preferred-api-type", "chat"); // 记住这次成功的类型
         return result;
       }
     }
