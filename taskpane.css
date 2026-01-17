@@ -1,0 +1,103 @@
+/* 通用布局 */
+body {
+    margin: 0;
+    padding: 15px;
+    background-color: #fff;
+    color: #333;
+    font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+}
+
+#container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+h2 {
+    margin: 0 0 5px 0;
+    font-weight: 600;
+}
+
+hr {
+    border: 0;
+    border-top: 1px solid #eee;
+    margin: 5px 0;
+}
+
+/* 输入框与文本域 */
+input[type="text"], textarea {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 8px;
+    font-size: 12px;
+}
+
+textarea {
+    height: 120px;
+    resize: vertical;
+}
+
+/* 按钮样式 */
+.button-group {
+    display: flex;
+    gap: 10px;
+}
+
+.ms-Button {
+    flex: 1;
+    padding: 8px 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f3f2f1;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s;
+}
+
+.ms-Button--primary {
+    background-color: #0078d7;
+    color: #fff;
+    border-color: #0078d7;
+}
+
+.ms-Button--primary:hover {
+    background-color: #005a9e;
+}
+
+.ms-Button:disabled {
+    background-color: #ccc;
+    border-color: #ccc;
+    color: #fff;
+    cursor: not-allowed;
+}
+
+/* 状态提示 */
+.status-hint {
+    font-size: 12px;
+    min-height: 18px;
+    margin-top: 5px;
+}
+
+.status-error {
+    color: #f00;
+}
+
+.status-success {
+    color: #009688;
+}
+
+/* 底部提示 */
+#footer {
+    position: sticky;
+    bottom: 0;
+    background: #fff;
+    padding-top: 10px;
+}
