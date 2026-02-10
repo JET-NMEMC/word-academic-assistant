@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0" xmlns:ov="http://schemas.microsoft.com/office/taskpaneappversionoverrides" xsi:type="TaskPaneApp">
   <Id>b4c6e9f2-0a1d-4b8c-9e3f-5d2a7b1c4e6f</Id>
-  <Version>1.2.0.0</Version>
+  <Version>1.3.0.0</Version>
   <ProviderName>JET-NMEMC</ProviderName>
   <DefaultLocale>zh-CN</DefaultLocale>
   <DisplayName DefaultValue="学术写作助手" />
@@ -13,6 +13,7 @@
     <AppDomain>https://jet-nmemc.github.io</AppDomain>
     <AppDomain>https://api.doubao.com</AppDomain>
     <AppDomain>https://ark.cn-beijing.volces.com</AppDomain>
+    <AppDomain>https://static2.sharepointonline.com</AppDomain>
   </AppDomains>
   <Hosts>
     <Host Name="Document" />
