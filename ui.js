@@ -22,17 +22,39 @@ export const ui = {
     globalStatus: document.getElementById("global-status")
   },
 
-  setBusy(busy) {
+  setBusy(busy, type = null) {
     const { btnPolishExecute, btnTranslateExecute, btnSaveConfig } = this.elements;
-    const overlay = document.getElementById("loading-overlay");
     
+    // 取消全局遮罩逻辑
+    // const overlay = document.getElementById("loading-overlay");
+    // if (overlay) overlay.style.display = busy ? "flex" : "none";
+
+    // 针对特定按钮设置加载状态
+    if (type) {
+      const btn = type === "polish" ? btnPolishExecute : btnTranslateExecute;
+      const icon = btn.querySelector(".ms-Icon");
+      const text = btn.querySelector(".btn-text");
+
+      if (busy) {
+        btn.classList.add("is-loading");
+        if (icon) {
+          icon.dataset.oldClass = icon.className;
+          icon.className = "ms-Icon ms-Icon--ProgressRingDots"; // 切换为加载图标
+        }
+        if (text) text.textContent = type === "polish" ? "润色中..." : "翻译中...";
+      } else {
+        btn.classList.remove("is-loading");
+        if (icon && icon.dataset.oldClass) {
+          icon.className = icon.dataset.oldClass; // 恢复原图标
+        }
+        if (text) text.textContent = "执行";
+      }
+    }
+
+    // 通用状态处理
     [btnPolishExecute, btnTranslateExecute, btnSaveConfig].forEach(btn => {
       if (btn) btn.disabled = busy;
     });
-
-    if (overlay) {
-      overlay.style.display = busy ? "flex" : "none";
-    }
     
     document.body.style.cursor = busy ? "wait" : "default";
   },
