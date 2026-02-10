@@ -75,6 +75,9 @@ function bindEvents() {
 
     try {
       await callArkAPI(apiKeyValue, endpointIdValue, prompt, (chunk) => {
+        // 当收到第一个数据块时，立即停止遮罩，让用户看到流式输出
+        ui.setBusy(false);
+        
         // 使用 requestAnimationFrame 确保在浏览器渲染帧中更新 UI，提升流式顺滑度
         requestAnimationFrame(() => {
           resultPolish.value = chunk;
@@ -87,6 +90,7 @@ function bindEvents() {
     } catch (err) {
       ui.showStatus("polish", err.message, "error");
     } finally {
+      // 确保无论成功还是失败，遮罩最终都会关闭
       ui.setBusy(false);
     }
   };
@@ -110,6 +114,9 @@ function bindEvents() {
 
     try {
       await callArkAPI(apiKeyValue, endpointIdValue, prompt, (chunk) => {
+        // 当收到第一个数据块时，立即停止遮罩，让用户看到流式输出
+        ui.setBusy(false);
+
         requestAnimationFrame(() => {
           resultTranslate.value = chunk;
           resultTranslate.scrollTop = resultTranslate.scrollHeight;
@@ -121,6 +128,7 @@ function bindEvents() {
     } catch (err) {
       ui.showStatus("translate", err.message, "error");
     } finally {
+      // 确保无论成功还是失败，遮罩最终都会关闭
       ui.setBusy(false);
     }
   };
