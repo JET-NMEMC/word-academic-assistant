@@ -203,6 +203,20 @@ body {
     background: var(--brand-dark);
 }
 
+/* 按钮状态动画 */
+.action-btn .ms-Icon {
+    transition: transform 0.2s;
+}
+
+.action-btn.is-loading .ms-Icon {
+    animation: spin 1s linear infinite;
+}
+
+.action-btn.is-loading {
+    opacity: 0.8;
+    cursor: wait;
+}
+
 .mini-btn {
     background: rgba(255, 255, 255, 0.9);
     border: 1px solid var(--border-main);
