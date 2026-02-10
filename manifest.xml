@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0" xmlns:ov="http://schemas.microsoft.com/office/taskpaneappversionoverrides" xsi:type="TaskPaneApp">
   <Id>b4c6e9f2-0a1d-4b8c-9e3f-5d2a7b1c4e6f</Id>
-  <Version>1.0.0.5</Version>
+  <Version>1.2.0.0</Version>
   <ProviderName>JET-NMEMC</ProviderName>
   <DefaultLocale>zh-CN</DefaultLocale>
-  <DisplayName DefaultValue="汉语学术写作助手" />
-  <Description DefaultValue="为汉语学术作者提供润色和汉译英功能" />
+  <DisplayName DefaultValue="学术写作助手" />
+  <Description DefaultValue="专业汉语补全润色与学术英语翻译助手" />
   <IconUrl DefaultValue="https://res-1.cdn.office.net/files/fabric-cdn-prod_20230815.002/assets/brand-icons/product/png/word_32x1.png" />
   <HighResolutionIconUrl DefaultValue="https://res-1.cdn.office.net/files/fabric-cdn-prod_20230815.002/assets/brand-icons/product/png/word_64x1.png" />
   <SupportUrl DefaultValue="https://github.com/JET-NMEMC/word-academic-assistant" />
@@ -84,8 +84,8 @@
         <bt:String id="GetStarted.Title" DefaultValue="开始使用" />
       </bt:ShortStrings>
       <bt:LongStrings>
-        <bt:String id="TaskpaneButton.Tooltip" DefaultValue="打开汉语学术写作助手侧边栏" />
-        <bt:String id="GetStarted.Description" DefaultValue="点击按钮打开写作助手。" />
+        <bt:String id="TaskpaneButton.Tooltip" DefaultValue="打开学术写作助手侧边栏" />
+        <bt:String id="GetStarted.Description" DefaultValue="点击按钮开启您的专业写作辅助之旅。" />
       </bt:LongStrings>
     </Resources>
   </VersionOverrides>
