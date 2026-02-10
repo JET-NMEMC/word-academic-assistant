@@ -24,9 +24,16 @@ export const ui = {
 
   setBusy(busy) {
     const { btnPolishExecute, btnTranslateExecute, btnSaveConfig } = this.elements;
+    const overlay = document.getElementById("loading-overlay");
+    
     [btnPolishExecute, btnTranslateExecute, btnSaveConfig].forEach(btn => {
       if (btn) btn.disabled = busy;
     });
+
+    if (overlay) {
+      overlay.style.display = busy ? "flex" : "none";
+    }
+    
     document.body.style.cursor = busy ? "wait" : "default";
   },
 
@@ -49,6 +56,10 @@ export const ui = {
 
     if (!apiKey || !endpointId || !resultPolish) return;
 
+    // 如果正在处理中，不要更改按钮状态（由 setBusy 统一控制）
+    const overlay = document.getElementById("loading-overlay");
+    if (overlay && overlay.style.display === "flex") return;
+
     const apiKeyValue = apiKey.value.trim();
     const endpointIdValue = endpointId.value.trim();
     const polishResultValue = resultPolish.value.trim();
@@ -62,9 +73,9 @@ export const ui = {
       hasSelection = false;
     }
 
-    btnPolishExecute.disabled = !apiKeyValue || !endpointIdValue || !hasSelection;
-    btnTranslateExecute.disabled = !apiKeyValue || !endpointIdValue || !polishResultValue;
-    btnPolishApply.disabled = !polishResultValue;
-    btnTranslateApply.disabled = !translateResultValue;
+    if (btnPolishExecute) btnPolishExecute.disabled = !apiKeyValue || !endpointIdValue || !hasSelection;
+    if (btnTranslateExecute) btnTranslateExecute.disabled = !apiKeyValue || !endpointIdValue || !polishResultValue;
+    if (btnPolishApply) btnPolishApply.disabled = !polishResultValue;
+    if (btnTranslateApply) btnTranslateApply.disabled = !translateResultValue;
   }
 };
