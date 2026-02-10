@@ -46,7 +46,7 @@
                     </div>
                     <div class="ms-TextField">
                         <label class="ms-Label">润色模板</label>
-                        <textarea id="prompt-polish-template" class="ms-TextField-field" rows="2">请对以下汉语学术文本进行补全和润色，要求术语准确、逻辑清晰、符合学术写作规范，保留原文核心含义：{text}</textarea>
+                        <textarea id="prompt-polish-template" class="ms-TextField-field" rows="2">请对以下汉语学术文本进行补全和润色，要求术语准确、逻辑清晰、符合学术写作规范，保留原文核心含义，只要最终结果：{text}</textarea>
                     </div>
                     <div class="ms-TextField">
                         <label class="ms-Label">翻译模板</label>
@@ -66,7 +66,7 @@
                     <div class="card-actions">
                         <button id="btn-polish-execute" class="action-btn primary" title="执行润色">
                             <i class="ms-Icon ms-Icon--Play" aria-hidden="true"></i>
-                            执行
+                            <span class="btn-text">执行</span>
                         </button>
                     </div>
                 </div>
@@ -88,7 +88,7 @@
                     <div class="card-actions">
                         <button id="btn-translate-execute" class="action-btn primary" title="开始翻译">
                             <i class="ms-Icon ms-Icon--Translate" aria-hidden="true"></i>
-                            执行
+                            <span class="btn-text">执行</span>
                         </button>
                     </div>
                 </div>
@@ -110,7 +110,7 @@
         </footer>
     </div>
 
-    <!-- 加载遮罩 -->
+    <!-- 加载遮罩 (已根据用户要求取消) -->
     <div id="loading-overlay" class="overlay" style="display: none;">
         <div class="spinner"></div>
         <p class="ms-font-s">正在处理中...</p>
