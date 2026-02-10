@@ -1,103 +1,292 @@
-/* 通用布局 */
+/* Fluent UI Design Tokens & Variables */
+:root {
+    --brand-primary: #0078d4;
+    --brand-dark: #005a9e;
+    --brand-light: #eff6fc;
+    --text-main: #323130;
+    --text-secondary: #605e5c;
+    --bg-main: #ffffff;
+    --bg-secondary: #faf9f8;
+    --border-main: #edebe9;
+    --status-success: #107c10;
+    --status-error: #a4262c;
+    --shadow-main: 0 2px 4px rgba(0, 0, 0, 0.05), 0 0 2px rgba(0, 0, 0, 0.05);
+}
+
+/* Base Styles */
 body {
     margin: 0;
-    padding: 15px;
-    background-color: #fff;
-    color: #333;
-    font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+    padding: 0;
+    background-color: var(--bg-secondary);
+    color: var(--text-main);
+    overflow-x: hidden;
 }
 
-#container {
+#app-container {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    height: 100vh;
 }
 
-.section {
+/* Header */
+.app-header {
+    background-color: var(--bg-main);
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid var(--border-main);
+    box-shadow: var(--shadow-main);
+    z-index: 10;
+}
+
+.app-logo i {
+    font-size: 24px;
+    color: var(--brand-primary);
+}
+
+.app-title h1 {
+    margin: 0;
+    line-height: 1.2;
+    color: var(--text-main);
+}
+
+.app-title p {
+    margin: 2px 0 0 0;
+    color: var(--text-secondary);
+}
+
+/* Content Area */
+.app-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Config Accordion */
+.config-accordion {
+    background: var(--bg-main);
+    border: 1px solid var(--border-main);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.config-accordion summary {
+    padding: 10px 12px;
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-secondary);
+    transition: background 0.2s;
+    user-select: none;
+}
+
+.config-accordion summary:hover {
+    background: var(--bg-secondary);
+}
+
+.config-accordion summary .chevron {
+    margin-left: auto;
+    font-size: 10px;
+    transition: transform 0.3s;
+}
+
+.config-accordion[open] summary .chevron {
+    transform: rotate(180deg);
+}
+
+.config-content {
+    padding: 12px;
+    border-top: 1px solid var(--border-main);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Action Cards */
+.action-card {
+    background: var(--bg-main);
+    border: 1px solid var(--border-main);
+    border-radius: 4px;
+    padding: 12px;
+    box-shadow: var(--shadow-main);
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
 
-h2 {
-    margin: 0 0 5px 0;
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-header h2 {
+    margin: 0;
     font-weight: 600;
 }
 
-hr {
-    border: 0;
-    border-top: 1px solid #eee;
-    margin: 5px 0;
+/* Result Container */
+.result-container {
+    position: relative;
+    border: 1px solid var(--border-main);
+    border-radius: 2px;
 }
 
-/* 输入框与文本域 */
-input[type="text"], textarea {
+.result-area {
     width: 100%;
-    box-sizing: border-box;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    padding: 8px;
-    font-size: 12px;
-}
-
-textarea {
-    height: 120px;
+    min-height: 100px;
+    max-height: 200px;
+    border: none;
+    padding: 10px;
+    font-size: 13px;
+    line-height: 1.6;
     resize: vertical;
+    box-sizing: border-box;
+    font-family: inherit;
 }
 
-/* 按钮样式 */
-.button-group {
-    display: flex;
-    gap: 10px;
+.result-area:focus {
+    outline: none;
 }
 
+.floating-actions {
+    position: absolute;
+    right: 8px;
+    bottom: 8px;
+}
+
+/* Buttons */
 .ms-Button {
-    flex: 1;
-    padding: 8px 16px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background-color: #f3f2f1;
+    height: 32px;
+    border-radius: 2px;
+    font-weight: 400;
     cursor: pointer;
-    font-size: 14px;
-    transition: background-color 0.2s;
+    border: 1px solid var(--border-main);
+    background: var(--bg-main);
 }
 
 .ms-Button--primary {
-    background-color: #0078d7;
-    color: #fff;
-    border-color: #0078d7;
+    background-color: var(--brand-primary);
+    border-color: var(--brand-primary);
+    color: white;
 }
 
 .ms-Button--primary:hover {
-    background-color: #005a9e;
+    background-color: var(--brand-dark);
 }
 
-.ms-Button:disabled {
-    background-color: #ccc;
-    border-color: #ccc;
-    color: #fff;
-    cursor: not-allowed;
+.action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border: 1px solid var(--border-main);
+    border-radius: 2px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.2s;
 }
 
-/* 状态提示 */
-.status-hint {
+.action-btn.primary {
+    background: var(--brand-primary);
+    color: white;
+    border-color: var(--brand-primary);
+}
+
+.action-btn.primary:hover {
+    background: var(--brand-dark);
+}
+
+.mini-btn {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid var(--border-main);
+    padding: 4px 8px;
+    border-radius: 2px;
+    font-size: 11px;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.mini-btn:hover {
+    background: var(--bg-secondary);
+}
+
+/* Text Fields */
+.ms-TextField-field {
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid var(--border-main);
+    border-radius: 2px;
+    font-size: 13px;
+    box-sizing: border-box;
+}
+
+.ms-TextField-field:focus {
+    border-color: var(--brand-primary);
+    outline: none;
+}
+
+.ms-Label {
     font-size: 12px;
-    min-height: 18px;
-    margin-top: 5px;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 4px;
 }
 
-.status-error {
-    color: #f00;
+/* Status & Footer */
+.status-hint {
+    font-size: 11px;
+    min-height: 16px;
+    margin-top: 4px;
 }
 
-.status-success {
-    color: #009688;
+.status-error { color: var(--status-error); }
+.status-success { color: var(--status-success); }
+
+.app-footer {
+    padding: 8px 16px;
+    background: var(--bg-main);
+    border-top: 1px solid var(--border-main);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-/* 底部提示 */
-#footer {
-    position: sticky;
+.app-info { color: var(--text-secondary); }
+
+/* Loading Overlay */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
     bottom: 0;
-    background: #fff;
-    padding-top: 10px;
+    background: rgba(255, 255, 255, 0.7);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    backdrop-filter: blur(2px);
+}
+
+.spinner {
+    width: 28px;
+    height: 28px;
+    border: 2px solid var(--brand-light);
+    border-top: 2px solid var(--brand-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 12px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
