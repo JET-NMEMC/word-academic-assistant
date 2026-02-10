@@ -25,10 +25,6 @@ export const ui = {
   setBusy(busy, type = null) {
     const { btnPolishExecute, btnTranslateExecute, btnSaveConfig } = this.elements;
     
-    // 取消全局遮罩逻辑
-    // const overlay = document.getElementById("loading-overlay");
-    // if (overlay) overlay.style.display = busy ? "flex" : "none";
-
     // 针对特定按钮设置加载状态
     if (type) {
       const btn = type === "polish" ? btnPolishExecute : btnTranslateExecute;
@@ -77,10 +73,6 @@ export const ui = {
     const { apiKey, endpointId, resultPolish, resultTranslate, btnPolishExecute, btnTranslateExecute, btnPolishApply, btnTranslateApply } = this.elements;
 
     if (!apiKey || !endpointId || !resultPolish) return;
-
-    // 如果正在处理中，不要更改按钮状态（由 setBusy 统一控制）
-    const overlay = document.getElementById("loading-overlay");
-    if (overlay && overlay.style.display === "flex") return;
 
     const apiKeyValue = apiKey.value.trim();
     const endpointIdValue = endpointId.value.trim();
