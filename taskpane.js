@@ -70,13 +70,13 @@ function bindEvents() {
 
     const prompt = polishTemplate.replace("{text}", selectedText);
     ui.showStatus("polish", "正在润色...", "success");
-    ui.setBusy(true);
+    ui.setBusy(true, "polish");
     resultPolish.value = ""; // 清空上次结果
 
     try {
       await callArkAPI(apiKeyValue, endpointIdValue, prompt, (chunk) => {
-        // 当收到第一个数据块时，立即停止遮罩，让用户看到流式输出
-        ui.setBusy(false);
+        // 当收到第一个数据块时，恢复按钮状态，让用户看到流式输出
+        ui.setBusy(false, "polish");
         
         // 使用 requestAnimationFrame 确保在浏览器渲染帧中更新 UI，提升流式顺滑度
         requestAnimationFrame(() => {
@@ -90,8 +90,8 @@ function bindEvents() {
     } catch (err) {
       ui.showStatus("polish", err.message, "error");
     } finally {
-      // 确保无论成功还是失败，遮罩最终都会关闭
-      ui.setBusy(false);
+      // 确保无论成功还是失败，状态最终都会恢复
+      ui.setBusy(false, "polish");
     }
   };
 
@@ -109,13 +109,13 @@ function bindEvents() {
 
     const prompt = translateTemplate.replace("{text}", polishText);
     ui.showStatus("translate", "正在翻译...", "success");
-    ui.setBusy(true);
+    ui.setBusy(true, "translate");
     resultTranslate.value = ""; // 清空上次结果
 
     try {
       await callArkAPI(apiKeyValue, endpointIdValue, prompt, (chunk) => {
-        // 当收到第一个数据块时，立即停止遮罩，让用户看到流式输出
-        ui.setBusy(false);
+        // 当收到第一个数据块时，恢复按钮状态，让用户看到流式输出
+        ui.setBusy(false, "translate");
 
         requestAnimationFrame(() => {
           resultTranslate.value = chunk;
@@ -128,8 +128,8 @@ function bindEvents() {
     } catch (err) {
       ui.showStatus("translate", err.message, "error");
     } finally {
-      // 确保无论成功还是失败，遮罩最终都会关闭
-      ui.setBusy(false);
+      // 确保无论成功还是失败，状态最终都会恢复
+      ui.setBusy(false, "translate");
     }
   };
 
